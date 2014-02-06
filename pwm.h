@@ -16,23 +16,24 @@ void PWM_Init()
     // CS1x - no prescaling (TABLE 40)
 }
 
-void rozjasnij()
+void przyspiesz()
 {
-    int8_t licznik=0;
+    uint16_t licznik=0;
     for(licznik=MIN_PWM; licznik<=MAX_PWM; licznik++)
     {
         OCR1A = licznik;
         _delay_ms(16);
     }
 }
-void pociemnij()
+void spowolnij()
 {
-    int8_t licznik=0;
+    uint16_t licznik=0;
     for(licznik=MAX_PWM; licznik>=MIN_PWM; licznik--)
     {
         OCR1A = licznik;
         _delay_ms(16);
     }
+
 }
 #endif // INIT_H_INCLUDED
 

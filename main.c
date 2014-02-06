@@ -1,5 +1,5 @@
 #include <avr/io.h>
-#define F_CPU 1000000UL
+#define F_CPU 4000000UL
 #define __DELAY_BACKWARD_COMPATIBLE__
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -29,6 +29,31 @@ void Switch_Init()
     PORT_SWITCH |= _BV(SWITCH_DOWN);
     PORT_SWITCH |= _BV(SWITCH_OK);
 }
+
+/*
+int main()
+{
+
+    wlacz_LCD();
+    Switch_Init();
+    PWM_Init();
+    sei();
+
+    _delay_ms(1000);
+    wyswietl_LCD("kutas");
+    _delay_ms(1000);
+
+
+    while(1)
+        {
+           if(bit_is_clear(PIN_SWITCH, SWITCH_UP)) wyswietl_LCD("UP");
+           else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN)) wyswietl_LCD("DOWN");
+           else if(bit_is_clear(PIN_SWITCH, SWITCH_OK)) wyswietl_LCD("OK");
+           _delay_ms(100);
+        }
+}
+*/
+
 int main()
 {
 
@@ -41,23 +66,21 @@ int main()
     int8_t wait = TAK;
     int8_t wait2 = TAK;
     int8_t ile_petli = 0;
-    int8_t licznik;
+    uint16_t licznik;
     while(work)
     {
        //zrobic funkcje ktora zamienia int na *char
 
-        wyswietl_LCD("witam kliknij ok");
+        wyswietl_LCD("witam kliknij OK");
         wait = TAK;
         while(wait)
             if(bit_is_clear(PIN_SWITCH, SWITCH_OK)) wait = NIE;
 
-        wyswietl_LCD("ile petli?");
-        _delay_ms(1000);
 
+        wyswietl_LCD("ile petli?");
         wait = TAK;
         while(wait)
         {
-            wyswietl_LCD("zliczam"); //powinna byc liczba
             wait2 = TAK;
             while(wait2)
             {
@@ -65,11 +88,13 @@ int main()
                 if(bit_is_clear(PIN_SWITCH, SWITCH_UP))
                 {
                     ile_petli = 2;
+                    wyswietl_LCD("ilos to 2");
                     //wait2 = NIE;
                 }
                 else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN))
                 {
                     ile_petli = 5;
+                    wyswietl_LCD("ilos to 5");
                     //wait2 = NIE;
                 }
                 else if(bit_is_clear(PIN_SWITCH, SWITCH_OK))
@@ -81,22 +106,15 @@ int main()
                 //char *ile = ile_petli;
                 //wyswietl_LCD(ile);
         }
-        wyswietl_LCD("ok?");
-        _delay_ms(100);
-        wait = TAK;
-        while(wait)
-            if(bit_is_clear(PIN_SWITCH, SWITCH_OK)) wait = NIE;
 
-        for (licznik=0; licznik<3; licznik++)
+        for (licznik=0; licznik<ile_petli; licznik++)
         {
             wyswietl_LCD("przyspieszam...");
-            rozjasnij();
+            przyspiesz();
             _delay_ms(100);
             wyswietl_LCD("spowalniam...");
-            pociemnij();
+            spowolnij();
             _delay_ms(100);
         }
     }
 }
-
-
