@@ -18,7 +18,7 @@ void PWM_Init()
 
 void rozjasnij()
 {
-    int licznik=0;
+    int8_t licznik=0;
     for(licznik=MIN_PWM; licznik<=MAX_PWM; licznik++)
     {
         OCR1A = licznik;
@@ -27,7 +27,7 @@ void rozjasnij()
 }
 void pociemnij()
 {
-    int licznik=0;
+    int8_t licznik=0;
     for(licznik=MAX_PWM; licznik>=MIN_PWM; licznik--)
     {
         OCR1A = licznik;

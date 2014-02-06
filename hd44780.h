@@ -89,6 +89,7 @@ void wlacz_LCD()
 
 void wyswietl_LCD( char *napis)
 {
+    czysc_LCD();
     int8_t k=0;
     int8_t ile = strlen(napis);
     while(k<ile)
