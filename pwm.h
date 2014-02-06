@@ -22,7 +22,7 @@ void przyspiesz()
     for(licznik=MIN_PWM; licznik<=MAX_PWM; licznik++)
     {
         OCR1A = licznik;
-        _delay_ms(16);
+        _delay_ms(8);
     }
 }
 void spowolnij()
@@ -31,7 +31,7 @@ void spowolnij()
     for(licznik=MAX_PWM; licznik>=MIN_PWM; licznik--)
     {
         OCR1A = licznik;
-        _delay_ms(16);
+        _delay_ms(4);
     }
 
 }

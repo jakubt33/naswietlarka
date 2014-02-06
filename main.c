@@ -62,39 +62,39 @@ int main()
     PWM_Init();
     sei();
 
-    int8_t work = TAK;
-    int8_t wait = TAK;
-    int8_t wait2 = TAK;
-    int8_t ile_petli = 0;
-    uint16_t licznik;
+    int work = TAK;
+    int wait = TAK;
+    int wait2 = TAK;
+    int licznik;
     while(work)
     {
        //zrobic funkcje ktora zamienia int na *char
+        int ile_petli = 0;
 
         wyswietl_LCD("witam kliknij OK");
+        _delay_ms(200);
         wait = TAK;
         while(wait)
             if(bit_is_clear(PIN_SWITCH, SWITCH_OK)) wait = NIE;
 
-
+        _delay_ms(200);
         wyswietl_LCD("ile petli?");
         wait = TAK;
-        while(wait)
+        do
         {
             wait2 = TAK;
-            while(wait2)
+            do
             {
-                _delay_ms(50);
                 if(bit_is_clear(PIN_SWITCH, SWITCH_UP))
                 {
-                    ile_petli = 2;
-                    wyswietl_LCD("ilos to 2");
+                    ile_petli += 1;
+                    wyswietl_LCD("dodano");
                     //wait2 = NIE;
                 }
                 else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN))
                 {
-                    ile_petli = 5;
-                    wyswietl_LCD("ilos to 5");
+                    ile_petli -= 1;
+                    wyswietl_LCD("odejeto");
                     //wait2 = NIE;
                 }
                 else if(bit_is_clear(PIN_SWITCH, SWITCH_OK))
@@ -102,10 +102,11 @@ int main()
                     wait = NIE;
                     wait2 = NIE;
                 }
-            }
+                _delay_ms(200);
+            } while(wait2 == TAK);
                 //char *ile = ile_petli;
                 //wyswietl_LCD(ile);
-        }
+        } while (wait == TAK);
 
         for (licznik=0; licznik<ile_petli; licznik++)
         {
@@ -116,5 +117,10 @@ int main()
             spowolnij();
             _delay_ms(100);
         }
+        wyswietl_LCD("zakonczono prace");
+        _delay_ms(200);
+        wait = TAK;
+        while(wait)
+            if(bit_is_clear(PIN_SWITCH, SWITCH_OK)) wait = NIE;
     }
 }
