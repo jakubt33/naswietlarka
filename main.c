@@ -30,30 +30,29 @@ void Switch_Init()
     PORT_SWITCH |= _BV(SWITCH_OK);
 }
 
-/*
-int main()
+void gen_char(char *ch, int *i)
 {
+    if(*i>99)
+    {
+        *i = 0;
+    }
+    else if(*i<0)
+    {
+        *i = 99;
+    }
+    if (*i<10)
+    {
+        ch[0] = (*i + '0');
+        ch[1] = '\0';
+    }
+    else if(*i<100)
+    {
+        ch[0] = (*i/10 + '0');
+        ch[1] = (*i%10 + '0');
+        ch[2] = '\0';
+    }
 
-    wlacz_LCD();
-    Switch_Init();
-    PWM_Init();
-    sei();
-
-    _delay_ms(1000);
-    wyswietl_LCD("kutas");
-    _delay_ms(1000);
-
-
-    while(1)
-        {
-           if(bit_is_clear(PIN_SWITCH, SWITCH_UP)) wyswietl_LCD("UP");
-           else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN)) wyswietl_LCD("DOWN");
-           else if(bit_is_clear(PIN_SWITCH, SWITCH_OK)) wyswietl_LCD("OK");
-           _delay_ms(100);
-        }
 }
-*/
-
 int main()
 {
 
@@ -68,7 +67,6 @@ int main()
     int licznik;
     while(work)
     {
-       //zrobic funkcje ktora zamienia int na *char
         int ile_petli = 0;
 
         wyswietl_LCD("witam kliknij OK");
@@ -76,6 +74,9 @@ int main()
         wait = TAK;
         while(wait)
             if(bit_is_clear(PIN_SWITCH, SWITCH_OK)) wait = NIE;
+
+
+        char ch_liczba[3];
 
         _delay_ms(200);
         wyswietl_LCD("ile petli?");
@@ -88,14 +89,15 @@ int main()
                 if(bit_is_clear(PIN_SWITCH, SWITCH_UP))
                 {
                     ile_petli += 1;
-                    wyswietl_LCD("dodano");
+                    gen_char(ch_liczba, &ile_petli);
+                    wyswietl_LCD(ch_liczba);
                     //wait2 = NIE;
                 }
                 else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN))
                 {
                     ile_petli -= 1;
-                    wyswietl_LCD("odejeto");
-                    //wait2 = NIE;
+                    gen_char(ch_liczba, &ile_petli);
+                    wyswietl_LCD(ch_liczba);
                 }
                 else if(bit_is_clear(PIN_SWITCH, SWITCH_OK))
                 {
