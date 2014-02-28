@@ -1,26 +1,32 @@
 #ifndef PWM_H_INCLUDED
 #define PWM_H_INCLUDED
 
-void przyspiesz()
+void kierunek(int gdzie)
 {
-    uint16_t licznik=0;
-    for(licznik=MIN_PWM; licznik<=MAX_PWM; licznik++)
+    if(gdzie == PRZOD)
     {
-        OCR1A = licznik;
-        _delay_ms(8);
+        go();
+        OCR1A = 25;
+    }
+    else if(gdzie == TYL)
+    {
+        go();
+        OCR1A = 10;
+    }
+    else
+    {
+        stop();
     }
 }
 
-void spowolnij()
+void go()
 {
-    uint16_t licznik=0;
-    for(licznik=MAX_PWM; licznik>=MIN_PWM; licznik--)
-    {
-        OCR1A = licznik;
-        _delay_ms(4);
-    }
-
+    PORTB |= _BV(EN_PWM);
 }
 
+void stop()
+{
+    PORTB &= ~_BV(EN_PWM);
+}
 #endif // INIT_H_INCLUDED
 

@@ -13,6 +13,9 @@
 //MAIN
 #define NIE 0
 #define TAK 1
+
+#define PRZOD 1
+#define TYL -1
 //
 
 //INIT
@@ -23,15 +26,18 @@ void init_Switch();
 
 //PWM
 #define PWM 1
+#define EN_PWM 0
 #define MIN_PWM 20
 #define MAX_PWM 255
 
-void przyspiesz();
-void spowolnij();
+void kierunek(int gdzie);
+void go();
+void stop();
 //
 
 //SWITCHES
 #define PIN_SWITCH PINC
+#define KRANC PC0
 #define SWITCH_UP PC1
 #define SWITCH_DOWN PC2
 #define SWITCH_OK PC3

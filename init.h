@@ -76,12 +76,13 @@ void init_LCD()
 void init_PWM()
 {
     DDRB |= _BV(PWM); //tu jest PWM na timerze 2
+    DDRB |= _BV(EN_PWM); // odcinasz napiecia na serwie
 
     TCCR1A |= (0<<WGM11)|(1<<WGM10)|(1<<COM1A1)|(0<<COM1A0);
-    TCCR1B |= (0<<WGM13)|(1<<WGM12)|(0<<CS12)|(0<<CS11)|(1<<CS10);
+    TCCR1B |= (0<<WGM13)|(1<<WGM12)|(1<<CS12)|(0<<CS11)|(0<<CS10);
     // WGM1x - fast PWM, 8 bit, TOP-0x00FF,
     // Update of OCR1A-Bottom, TOV1 flag set on TOP (tabble 39)
-    // CS1x - no prescaling (TABLE 40)
+    // CS1x - 256 preskaler (TABLE 40)
 }
 
 void init_Switch()
@@ -89,10 +90,16 @@ void init_Switch()
     DDR_SWITCH &= ~(_BV(SWITCH_UP));
     DDR_SWITCH &= ~(_BV(SWITCH_DOWN));
     DDR_SWITCH &= ~(_BV(SWITCH_OK));
+    DDR_SWITCH &= ~(_BV(KRANC));
 
     PORT_SWITCH |= _BV(SWITCH_UP);
     PORT_SWITCH |= _BV(SWITCH_DOWN);
     PORT_SWITCH |= _BV(SWITCH_OK);
+    PORT_SWITCH |= _BV(KRANC);
+
+    //krancowka bezpeiczenstwa
+    MCUCR |= (1<<ISC11)|(1<<ISC10); // low level genereates interrupt
+    GICR |= (1<<INT1);
 }
 
 #endif // INIT_H_INCLUDED

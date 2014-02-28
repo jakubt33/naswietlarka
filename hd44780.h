@@ -1,6 +1,7 @@
 #ifndef HD44780_H_INCLUDED
 #define HD44780_H_INCLUDED
 
+
 void czysc_LCD()
 {
     PORT_LCD &= ~(_BV(RS_LCD));
