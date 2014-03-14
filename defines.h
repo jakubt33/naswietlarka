@@ -19,6 +19,11 @@ int flag_kierunek = 0;
 #define PRZOD 1
 #define TYL -1
 #define STOP 0
+
+int ilosc_petli();
+void wykonaj (int ile_petli);
+void beep();
+void pozycjonowanie();
 //
 
 //INIT

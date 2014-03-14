@@ -8,7 +8,7 @@ void czysc_LCD()
     push_LCD(1);
     PORT_LCD |= (_BV(RS_LCD));
     //czekaj 1.64ms
-    _delay_ms(1.64);
+    _delay_ms(2);
 
 }
 
