@@ -7,15 +7,18 @@ void kierunek(int gdzie)
     {
         go();
         OCR1A = 25;
+        flag_kierunek = PRZOD;
     }
     else if(gdzie == TYL)
     {
         go();
         OCR1A = 10;
+        flag_kierunek = TYL;
     }
     else
     {
         stop();
+        flag_kierunek = STOP;
     }
 }
 

@@ -102,5 +102,38 @@ void init_Switch()
     GICR |= (1<<INT1);
 }
 
+void init_Buzzer()
+{
+    DDR_BUZZER |= _BV(BUZZER);
+    buzzer_off();
+}
+
+void buzzer_off()
+{
+    PORT_BUZZER &= ~_BV(BUZZER);
+}
+
+void buzzer_on()
+{
+    PORT_BUZZER |= _BV(BUZZER);
+}
+
+void init_Relay()
+{
+    DDR_RELAY |= _BV(RELAY);
+    relay_off();
+}
+
+void relay_off()
+{
+    PORT_RELAY &= ~_BV(RELAY);
+}
+
+void relay_on()
+{
+    PORT_RELAY |= _BV(RELAY);
+}
+
+
 #endif // INIT_H_INCLUDED
 

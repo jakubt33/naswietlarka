@@ -3,13 +3,19 @@
 #include "pwm.h"
 #include "hd44780.h"
 
-int ilosc_petli(int*);
+int ilosc_petli();
 void wykonaj (int ile_petli);
 
 ISR(INT1_vect)
 {
-    kierunek(TYL); //koniec jazdy przod, trzeba wracac
-    wyswietl_LCD("COFAM");
+    if(flag_kierunek == PRZOD)
+    {
+        kierunek(TYL); //koniec jazdy przod, trzeba wracac
+        wyswietl_LCD("COFAM");
+    }
+    else
+        wyswietl_LCD("unexpected int");
+
 }
 void pozycjonowanie()
 {
@@ -31,116 +37,110 @@ void pozycjonowanie()
         stop();
     }
     wyswietl_LCD("ready to go");
+    _delay_ms(100);
+    _delay_ms(100);
 }
+
 int main()
 {
 
     init_LCD();
     init_Switch();
     init_PWM();
+    init_Buzzer();
+    init_Relay();
     sei();
 
-    stop();
-
-    int wait = TAK;
-    int wait2 = TAK;
-    int licznik = 0;
-
-    pozycjonowanie();
-    _delay_ms(2000);
-    kierunek(PRZOD);
-    wyswietl_LCD("PRZOD");
-
     while(1)
     {
-        if( bit_is_clear(PIN_SWITCH, KRANC) )
-        {
-            kierunek(PRZOD);
-            wyswietl_LCD("PRZOD");
-        }
+        stop();
+        int ile_petli = 0; //wartosc zadana przez uzytkownika
+        int wait = TAK;
+
+        wyswietl_LCD("witam kliknij OK");
+        _delay_ms(200);
+
+        wait = TAK;
+        while(wait)
+            if(bit_is_clear(PIN_SWITCH, SWITCH_OK)) wait = NIE;
+
+
+        ile_petli = ilosc_petli();
+
+        wykonaj(ile_petli);
+
+        wyswietl_LCD("zakonczono - OK");
+        _delay_ms(200);
+        wait = TAK;
+
+        while(wait)
+            if(bit_is_clear(PIN_SWITCH, SWITCH_OK)) wait = NIE;
     }
-    stop();
-    /*
-    while(1)
-    {
-    int ile_petli = 0; //wartosc zadana przez uzytkownika
-
-
-    wyswietl_LCD("witam kliknij OK");
-    _delay_ms(200);
-
-    wait = TAK;
-    while(wait)
-        if(bit_is_clear(PIN_SWITCH, SWITCH_OK)) wait = NIE;
-
-
-    ile_petli = ilosc_petli(&ile_petli);
-
-    wykonaj(ile_petli);
-
-    wyswietl_LCD("rozpocznij - OK");
-    _delay_ms(200);
-    wait = TAK;
-
-    while(wait)
-        if(bit_is_clear(PIN_SWITCH, SWITCH_OK)) wait = NIE;
-    }
-        */
 
 }
 
-/*
+
 void wykonaj (int ile_petli)
 {
-    int licznik;
+    int licznik=0;
+    //włączenie przekaźnika
+
+    pozycjonowanie();
     for (licznik=0; licznik<ile_petli; licznik++)
     {
-        wyswietl_LCD("inkrementacja...");
-        przod();
-        _delay_ms(1000);
-        wyswietl_LCD("dekrementacja...");
-        tyl();
-        _delay_ms(1000);
+        wyswietl_LCD("PRZOD");
+        kierunek(PRZOD);
+        _delay_ms(1500); //odleglosc dokad dojadą lampy
+
+        wyswietl_LCD("TYL");
+        kierunek(TYL);
+
+        int x=1;
+        while(x)
+        {
+            if(bit_is_clear(PIN_SWITCH, KRANC))
+            {
+                x=0;
+            }
+        }
+        stop();
     }
+    //wyłączenie przekaznika
 }
 
-int ilosc_petli(int *ile_petli)
+int ilosc_petli()
 {
     int wait = TAK;
-    int wait2 = TAK;
+    int ile_petli = 0;
     char ch_liczba[3]; //przechowywana jest liczba int w formie stringu
 
     wyswietl_LCD("ilosc petli:");
     _delay_ms(200);
 
 
+    wait = TAK;
+    do
     {
-        wait2 = TAK;
-        do
+        if(bit_is_clear(PIN_SWITCH, SWITCH_UP))
         {
-            if(bit_is_clear(PIN_SWITCH, SWITCH_UP))
-            {
-                *ile_petli += 1;
-                gen_char(ch_liczba, ile_petli);
-                wyswietl_LCD(ch_liczba);
-            }
-            else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN))
-            {
-                *ile_petli -= 1;
-                gen_char(ch_liczba, ile_petli);
-                wyswietl_LCD(ch_liczba);
-            }
-            else if(bit_is_clear(PIN_SWITCH, SWITCH_OK))
-            {
-                wait = NIE;
-                wait2 = NIE;
-            }
-            _delay_ms(200);
+            ile_petli += 1;
+            gen_char(ch_liczba, ile_petli);
+            wyswietl_LCD(ch_liczba);
         }
-        while(wait2 == TAK);
+        else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN))
+        {
+            ile_petli -= 1;
+            gen_char(ch_liczba, ile_petli);
+            wyswietl_LCD(ch_liczba);
+        }
+        else if(bit_is_clear(PIN_SWITCH, SWITCH_OK))
+        {
+            wait = NIE;
+        }
+        _delay_ms(200);
     }
-    while (wait == TAK);
+    while(wait == TAK);
 
-    return *ile_petli;
+
+    return ile_petli;
 }
-*/

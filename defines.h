@@ -10,18 +10,37 @@
 #include <avr/interrupt.h>
 #include <string.h>
 
+int flag_kierunek = 0;
+
 //MAIN
 #define NIE 0
 #define TAK 1
 
 #define PRZOD 1
 #define TYL -1
+#define STOP 0
 //
 
 //INIT
+#define DDR_BUZZER DDRD
+#define PORT_BUZZER PORTD
+#define BUZZER PD6
+
+#define RELAY PD7
+#define PORT_RELAY PORTD
+#define DDR_RELAY DDRD
+
 void init_LCD();
 void init_PWM();
 void init_Switch();
+
+void init_Buzzer();
+void buzzer_off();
+void buzzer_on();
+
+void init_ralay();
+void relay_on();
+void relay_off();
 //
 
 //PWM
@@ -56,7 +75,7 @@ void stop();
 #define DB7_LCD 7
 
 void czysc_LCD();
-void gen_char(char *ch, int *i);
+void gen_char(char *ch, int i);
 void push_LCD( int8_t bajt ) ;
 void wyswietl_LCD( char *napis);
 //
