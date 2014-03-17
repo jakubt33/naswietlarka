@@ -12,25 +12,25 @@ void czysc_LCD()
 
 }
 
-void gen_char(char *ch, int i)
+void gen_char(char *ch, int *i)
 {
-    if(i>99)
+    if(*i>99)
     {
-        i = 0;
+        *i = 0;
     }
-    else if(i<0)
+    else if(*i<0)
     {
-        i = 99;
+        *i = 99;
     }
-    if (i<10)
+    if (*i<10)
     {
-        ch[0] = (i + '0');
+        ch[0] = (*i + '0');
         ch[1] = '\0';
     }
-    else if(i<100)
+    else if(*i<100)
     {
-        ch[0] = (i/10 + '0');
-        ch[1] = (i%10 + '0');
+        ch[0] = (*i/10 + '0');
+        ch[1] = (*i%10 + '0');
         ch[2] = '\0';
     }
 }

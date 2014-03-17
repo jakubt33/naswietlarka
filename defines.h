@@ -80,7 +80,7 @@ void stop();
 #define DB7_LCD 7
 
 void czysc_LCD();
-void gen_char(char *ch, int i);
+void gen_char(char *ch, int *i);
 void push_LCD( int8_t bajt ) ;
 void wyswietl_LCD( char *napis);
 //
