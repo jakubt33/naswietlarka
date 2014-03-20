@@ -22,7 +22,9 @@ int main()
     {
 
         stop();
+
         int ile_petli = 0; //wartosc zadana przez uzytkownika
+        int dlugosc = 0;
         int wait = TAK;
 
         wyswietl_LCD("Start -> OK");
@@ -32,15 +34,50 @@ int main()
         while(wait)
             if(bit_is_clear(PIN_SWITCH, SWITCH_OK)) wait = NIE;
 
+        dlugosc = get_distance();
 
         ile_petli = ilosc_petli();
 
-        wykonaj(ile_petli);
+        wykonaj(ile_petli, dlugosc);
         _delay_ms(200);
     }
 
 }
+int get_distance()
+{
+    int dlugosc = 0;
+    char ch_liczba[3]; //przechowywana jest liczba int w formie stringu
 
+    wyswietl_LCD("dlugosc PBC:");
+    _delay_ms(200);
+
+    int wait = TAK;
+    do
+    {
+        if(bit_is_clear(PIN_SWITCH, SWITCH_UP))
+        {
+            dlugosc += 1;
+            gen_char(ch_liczba, &dlugosc);
+            wyswietl_LCD(ch_liczba);
+        }
+        else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN))
+        {
+            dlugosc -= 1;
+            gen_char(ch_liczba, &dlugosc);
+            wyswietl_LCD(ch_liczba);
+        }
+        else if(bit_is_clear(PIN_SWITCH, SWITCH_OK))
+        {
+            wait = NIE;
+        }
+        if(dlugosc>16) dlugosc = 0;
+        _delay_ms(200);
+    }
+    while(wait == TAK);
+
+    return dlugosc;
+
+}
 void pozycjonowanie()
 {
     if(bit_is_clear(PIN_SWITCH, KRANC));
@@ -60,8 +97,7 @@ void pozycjonowanie()
     stop();
 }
 
-
-void wykonaj (int ile_petli)
+void wykonaj (int ile_petli, int dlugosc)
 {
     int licznik=0;
     char ch_liczba[3];
@@ -75,6 +111,10 @@ void wykonaj (int ile_petli)
     init_PWM();
     _delay_ms(200);
 
+    int delay = 400;
+    if(dlugosc>MIN_DLUGOSC)
+        delay = 400 + (dlugosc-MIN_DLUGOSC)*150;
+
 
     for (licznik=0; licznik<ile_petli; licznik++)
     {
@@ -83,7 +123,7 @@ void wykonaj (int ile_petli)
         wyswietl_LCD(ch_liczba);
 
         kierunek(PRZOD);
-        _delay_ms(1500); //odleglosc dokad dojadą lampy
+        _delay_ms(delay); //odleglosc dokad dojadą lampy
 
         pozycjonowanie(); //jezdie do tylu az napotka krancowe
     }

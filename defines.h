@@ -19,9 +19,11 @@ int flag_kierunek = 0;
 #define PRZOD 1
 #define TYL -1
 #define STOP 0
+#define MIN_DLUGOSC 6
 
 int ilosc_petli();
-void wykonaj (int ile_petli);
+int get_distance();
+void wykonaj (int, int);
 void beep();
 void pozycjonowanie();
 //
