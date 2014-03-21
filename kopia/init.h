@@ -108,12 +108,6 @@ void init_Buzzer()
     buzzer_off();
 }
 
-void init_Timer()
-{
-    TCCR0 |= (1<<CS02)|(0<<CS01)|(1<<CS00); //preskaler 1024
-    TIMSK |= (1<<TOIE0); //ovf int enable
-}
-
 void buzzer_off()
 {
     PORT_BUZZER &= ~_BV(BUZZER);
@@ -142,4 +136,3 @@ void relay_on()
 
 
 #endif // INIT_H_INCLUDED
-

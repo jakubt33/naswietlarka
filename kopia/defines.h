@@ -10,26 +10,20 @@
 #include <avr/interrupt.h>
 #include <string.h>
 
+int flag_kierunek = 0;
 
+//MAIN
 #define NIE 0
 #define TAK 1
 
-volatile int flag_kierunek = 0;
-volatile int naswietlanie = NIE;
-int time = 0;
-volatile int overflow = 0;
-char ch_liczba[4]; //przechowywana jest liczba int w formie stringu
-
-
-//MAIN
 #define PRZOD 1
 #define TYL -1
 #define STOP 0
 #define MIN_DLUGOSC 6
 
-void get_time();
+int ilosc_petli();
 int get_distance();
-void wykonaj (int);
+void wykonaj (int, int);
 void beep();
 void pozycjonowanie();
 //
@@ -59,6 +53,8 @@ void relay_off();
 //PWM
 #define PWM 1
 #define EN_PWM 0
+#define MIN_PWM 20
+#define MAX_PWM 255
 
 void kierunek(int gdzie);
 void go();
@@ -86,11 +82,10 @@ void stop();
 #define DB7_LCD 7
 
 void czysc_LCD();
-void gen_char( char *ch, int *i);
+void gen_char(char *ch, int *i);
 void push_LCD( int8_t bajt ) ;
 void wyswietl_LCD( char *napis);
 //
 
 
 #endif // DEFINES_H_INCLUDED
-

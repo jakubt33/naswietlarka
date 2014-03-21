@@ -9,19 +9,18 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <string.h>
-
-
-#define NIE 0
-#define TAK 1
+#include <math.h>
 
 volatile int flag_kierunek = 0;
-volatile int naswietlanie = NIE;
-int time = 0;
+ int time = 0;
 volatile int overflow = 0;
-char ch_liczba[4]; //przechowywana jest liczba int w formie stringu
+ char ch_liczba[4]; //przechowywana jest liczba int w formie stringu
 
 
 //MAIN
+#define NIE 0
+#define TAK 1
+
 #define PRZOD 1
 #define TYL -1
 #define STOP 0

@@ -7,22 +7,6 @@ ISR(INT1_vect)
 {
     pozycjonowanie();
 }
-
-ISR(TIMER0_OVF_vect)
-{
-    if(naswietlanie)
-    {
-        overflow += 1;
-        if( (overflow%15) == 0)
-        {
-            time--;
-            overflow = 0;
-            gen_char(ch_liczba, &time);
-            wyswietl_LCD(ch_liczba);
-        }
-    }
-
-}
 int main()
 {
     init_LCD();
@@ -31,7 +15,6 @@ int main()
     init_Buzzer();
     init_LCD();
     init_PWM();
-    init_Timer();
 
     sei();
 
@@ -40,6 +23,7 @@ int main()
 
         stop();
 
+        int ile_petli = 0; //wartosc zadana przez uzytkownika
         int dlugosc = 0;
         int wait = TAK;
 
@@ -52,15 +36,13 @@ int main()
 
         dlugosc = get_distance();
 
-        get_time();
+        ile_petli = ilosc_petli();
 
-        wykonaj(dlugosc);
+        wykonaj(ile_petli, dlugosc);
         _delay_ms(200);
-
     }
 
 }
-
 int get_distance()
 {
     int dlugosc = 0;
@@ -75,14 +57,12 @@ int get_distance()
         if(bit_is_clear(PIN_SWITCH, SWITCH_UP))
         {
             dlugosc += 1;
-            if(dlugosc>16) dlugosc = 0;
             gen_char(ch_liczba, &dlugosc);
             wyswietl_LCD(ch_liczba);
         }
         else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN))
         {
             dlugosc -= 1;
-            if(dlugosc<0)   dlugosc = 16;
             gen_char(ch_liczba, &dlugosc);
             wyswietl_LCD(ch_liczba);
         }
@@ -90,6 +70,7 @@ int get_distance()
         {
             wait = NIE;
         }
+        if(dlugosc>16) dlugosc = 0;
         _delay_ms(200);
     }
     while(wait == TAK);
@@ -97,7 +78,6 @@ int get_distance()
     return dlugosc;
 
 }
-
 void pozycjonowanie()
 {
     if(bit_is_clear(PIN_SWITCH, KRANC));
@@ -117,49 +97,42 @@ void pozycjonowanie()
     stop();
 }
 
-void wykonaj (int dlugosc)
+void wykonaj (int ile_petli, int dlugosc)
 {
     int licznik=0;
-
-    int delay = 370;
-    if(dlugosc>MIN_DLUGOSC)
-        delay = delay + (dlugosc-MIN_DLUGOSC)*190; //dobrane tak aby jeździło na odp. odleglosc;
+    char ch_liczba[3];
 
     pozycjonowanie();
     _delay_ms(500);
 
     relay_on();
     _delay_ms(50);
-
-    TCNT0 = 0; //zerownaie timera0
-    overflow = 0;
-    naswietlanie = TAK;
-    init_LCD(); //dla pewnosci...
+    init_LCD();
     init_PWM();
-    _delay_ms(50);
+    _delay_ms(200);
 
-    while(time > 0)
+    int delay = 370;
+    if(dlugosc>MIN_DLUGOSC)
+        delay = delay + (dlugosc-MIN_DLUGOSC)*190;
+
+
+    for (licznik=0; licznik<ile_petli; licznik++)
     {
-        gen_char(ch_liczba, &time); //wyswietla ile cykli pozostało do konca naswietlania
+        int do_konca = ile_petli-licznik;
+        gen_char(ch_liczba, &do_konca); //wyswietla ile cykli pozostało do konca naswietlania
         wyswietl_LCD(ch_liczba);
 
         kierunek(PRZOD);
         _delay_ms(delay); //odleglosc dokad dojadą lampy
-
-        stop();
-
-        if(dlugosc<8) _delay_ms(2000);
-        else _delay_ms(500); //tyle lampy czekaja w nowej pozycji
-
+	stop();
+	delay_ms(2000);
         pozycjonowanie(); //jezdie do tylu az napotka krancowe
-        if(dlugosc<8) _delay_ms(2000);
-        else _delay_ms(500);
+	_delay_ms(2000);
     }
-    _delay_ms(500);
-    relay_off();
-    naswietlanie = NIE;
-    _delay_ms(500);
+    _delay_ms(1000);
     wyswietl_LCD("KONIEC PRACY");
+    _delay_ms(1000);
+    relay_off();
     beep();
 }
 
@@ -174,12 +147,13 @@ void beep()
     _delay_ms(700);
     buzzer_off();
 }
-
-void get_time()
+int ilosc_petli()
 {
     int wait = TAK;
+    int ile_petli = 0;
+    char ch_liczba[3]; //przechowywana jest liczba int w formie stringu
 
-    wyswietl_LCD("ile sekund:");
+    wyswietl_LCD("ilosc petli:");
     _delay_ms(200);
 
 
@@ -188,16 +162,14 @@ void get_time()
     {
         if(bit_is_clear(PIN_SWITCH, SWITCH_UP))
         {
-            if(time<5) time += 1;
-            else time += 5;
-            gen_char(ch_liczba, &time);
+            ile_petli += 5;
+            gen_char(ch_liczba, &ile_petli);
             wyswietl_LCD(ch_liczba);
         }
         else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN))
         {
-            if(time < 10) time -= 1;
-            else time -= 5;
-            gen_char(ch_liczba, &time);
+            ile_petli -= 5;
+            gen_char(ch_liczba, &ile_petli);
             wyswietl_LCD(ch_liczba);
         }
         else if(bit_is_clear(PIN_SWITCH, SWITCH_OK))
@@ -207,4 +179,7 @@ void get_time()
         _delay_ms(200);
     }
     while(wait == TAK);
+
+
+    return ile_petli;
 }

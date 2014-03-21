@@ -14,13 +14,13 @@ void czysc_LCD()
 
 void gen_char(char *ch, int *i)
 {
-    if(*i>999)
+    if(*i>99)
     {
         *i = 0;
     }
     else if(*i<0)
     {
-        *i = 999;
+        *i = 99;
     }
     if (*i<10)
     {
@@ -32,13 +32,6 @@ void gen_char(char *ch, int *i)
         ch[0] = (*i/10 + '0');
         ch[1] = (*i%10 + '0');
         ch[2] = '\0';
-    }
-    else if(*i<1000)
-    {
-        ch[0] = (*i/100 + '0');
-        ch[1] = ((*i%100)/10 + '0');
-        ch[2] = (*i%10 + '0');
-        ch[3] = '\0';
     }
 }
 
@@ -86,4 +79,3 @@ void wyswietl_LCD( char *napis)
 
 
 #endif // INIT_H_INCLUDED
-
