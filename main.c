@@ -17,11 +17,15 @@ ISR(TIMER0_OVF_vect)
         {
             time--;
             overflow = 0;
-            gen_char(ch_liczba, &time);
+            gen_char_time(ch_liczba, &time);
             wyswietl_LCD(ch_liczba);
+            if(time <=0)
+            {
+                naswietlanie = NIE;
+                time = STOP;
+            }
         }
     }
-
 }
 int main()
 {
@@ -131,16 +135,24 @@ void wykonaj (int dlugosc)
     relay_on();
     _delay_ms(50);
 
-    TCNT0 = 0; //zerownaie timera0
-    overflow = 0;
+    if(time==0) //funkcja nadajaca wartosci domyslne
+    {
+        if(dlugosc<=MIN_DLUGOSC) time = 85; //sekund
+        else if(dlugosc<=10) time = 90;
+        else if(dlugosc<=13) time = 95;
+        else time = 100;
+    }
+
     naswietlanie = TAK;
-    init_LCD(); //dla pewnosci...
+    init_LCD(); //dla pewnosci, labowy LCD...
     init_PWM();
     _delay_ms(50);
+    TCNT0 = 0; //zerownaie timera0
+    overflow = 0;
 
     while(time > 0)
     {
-        gen_char(ch_liczba, &time); //wyswietla ile cykli pozostało do konca naswietlania
+        gen_char_time(ch_liczba, &time); //wyswietla ile cykli pozostało do konca naswietlania
         wyswietl_LCD(ch_liczba);
 
         kierunek(PRZOD);
@@ -157,7 +169,6 @@ void wykonaj (int dlugosc)
     }
     _delay_ms(500);
     relay_off();
-    naswietlanie = NIE;
     _delay_ms(500);
     wyswietl_LCD("KONIEC PRACY");
     beep();
@@ -165,7 +176,6 @@ void wykonaj (int dlugosc)
 
 void beep()
 {
-    wyswietl_LCD("BEEP..BEEP");
     buzzer_on();
     _delay_ms(500);
     buzzer_off();
@@ -179,7 +189,7 @@ void get_time()
 {
     int wait = TAK;
 
-    wyswietl_LCD("ile sekund:");
+    wyswietl_LCD("ile sekund:         0-ust. domyslne");
     _delay_ms(200);
 
 
@@ -190,14 +200,14 @@ void get_time()
         {
             if(time<5) time += 1;
             else time += 5;
-            gen_char(ch_liczba, &time);
+            gen_char_time(ch_liczba, &time);
             wyswietl_LCD(ch_liczba);
         }
         else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN))
         {
             if(time < 10) time -= 1;
             else time -= 5;
-            gen_char(ch_liczba, &time);
+            gen_char_time(ch_liczba, &time);
             wyswietl_LCD(ch_liczba);
         }
         else if(bit_is_clear(PIN_SWITCH, SWITCH_OK))

@@ -16,7 +16,7 @@
 
 volatile int flag_kierunek = 0;
 volatile int naswietlanie = NIE;
-int time = 0;
+volatile int time = 0;
 volatile int overflow = 0;
 char ch_liczba[4]; //przechowywana jest liczba int w formie stringu
 
@@ -25,7 +25,7 @@ char ch_liczba[4]; //przechowywana jest liczba int w formie stringu
 #define PRZOD 1
 #define TYL -1
 #define STOP 0
-#define MIN_DLUGOSC 6
+#define MIN_DLUGOSC 7
 
 void get_time();
 int get_distance();
@@ -87,6 +87,8 @@ void stop();
 
 void czysc_LCD();
 void gen_char( char *ch, int *i);
+void gen_char_time( char *ch, volatile int *i);
+
 void push_LCD( int8_t bajt ) ;
 void wyswietl_LCD( char *napis);
 //

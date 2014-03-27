@@ -42,6 +42,36 @@ void gen_char(char *ch, int *i)
     }
 }
 
+void gen_char_time(char *ch, volatile int *i)
+{
+    if(*i>999)
+    {
+        *i = 0;
+    }
+    else if(*i<0)
+    {
+        *i = 999;
+    }
+    if (*i<10)
+    {
+        ch[0] = (*i + '0');
+        ch[1] = '\0';
+    }
+    else if(*i<100)
+    {
+        ch[0] = (*i/10 + '0');
+        ch[1] = (*i%10 + '0');
+        ch[2] = '\0';
+    }
+    else if(*i<1000)
+    {
+        ch[0] = (*i/100 + '0');
+        ch[1] = ((*i%100)/10 + '0');
+        ch[2] = (*i%10 + '0');
+        ch[3] = '\0';
+    }
+}
+
 void push_LCD( int8_t bajt ) //jako argument podajemy kod litery w ascii np: 'B'(lub własne dane )
 {
     //ustawienie EN
