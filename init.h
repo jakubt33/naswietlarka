@@ -69,7 +69,8 @@ void init_LCD()
     push_LCD(0b00001110);
     PORT_LCD |= _BV(RS_LCD);
 
-    czysc_LCD();
+    czysc_LCD_linia2();
+    czysc_LCD_linia1();
 
 }
 

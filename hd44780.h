@@ -2,16 +2,37 @@
 #define HD44780_H_INCLUDED
 
 
-void czysc_LCD()
+void czysc_LCD_linia1()
 {
-    PORT_LCD &= ~(_BV(RS_LCD));
-    push_LCD(1);
-    PORT_LCD |= (_BV(RS_LCD));
-    //czekaj 1.64ms
+    linia1();
+    wyswietl_LCD("                    ");
     _delay_ms(2);
-
+    linia1();
+}
+void czysc_LCD_linia2()
+{
+    linia2();
+    wyswietl_LCD("                    ");
+    _delay_ms(2);
+    linia2();
 }
 
+void linia2()
+{
+    PORT_LCD &= ~(_BV(RS_LCD));
+    push_LCD(0b10000000 | LINE2);
+    PORT_LCD |= (_BV(RS_LCD));
+    _delay_ms(2);
+    //czekaj 1.64ms
+}
+void linia1()
+{
+    PORT_LCD &= ~(_BV(RS_LCD));
+    push_LCD(0b10000000 | LINE1);
+    PORT_LCD |= (_BV(RS_LCD));
+    _delay_ms(2);
+    //czekaj 1.64ms
+}
 void gen_char(char *ch, int *i)
 {
     if(*i>999)
@@ -104,7 +125,6 @@ void push_LCD( int8_t bajt ) //jako argument podajemy kod litery w ascii np: 'B'
 
 void wyswietl_LCD( char *napis)
 {
-    czysc_LCD();
     int8_t k=0;
     int8_t ile = strlen(napis);
     while(k<ile)

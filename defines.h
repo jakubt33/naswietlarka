@@ -84,8 +84,13 @@ void stop();
 #define DB5_LCD 5
 #define DB6_LCD 6
 #define DB7_LCD 7
+#define LINE2 0x40
+#define LINE1 0x00
 
-void czysc_LCD();
+void czysc_LCD_linia1();
+void czysc_LCD_linia2();
+void linia1();
+void linia2();
 void gen_char( char *ch, int *i);
 void gen_char_time( char *ch, volatile int *i);
 

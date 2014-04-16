@@ -18,7 +18,9 @@ ISR(TIMER0_OVF_vect)
             time--;
             overflow = 0;
             gen_char_time(ch_liczba, &time);
+            czysc_LCD_linia2();
             wyswietl_LCD(ch_liczba);
+            wyswietl_LCD("s");
             if(time <=0)
             {
                 naswietlanie = NIE;
@@ -27,6 +29,7 @@ ISR(TIMER0_OVF_vect)
         }
     }
 }
+
 int main()
 {
     init_LCD();
@@ -41,12 +44,13 @@ int main()
 
     while(1)
     {
-
         stop();
 
         int dlugosc = 0;
         int wait = TAK;
 
+        czysc_LCD_linia2();
+        czysc_LCD_linia1();
         wyswietl_LCD("Start -> OK");
         _delay_ms(200);
 
@@ -70,6 +74,8 @@ int get_distance()
     int dlugosc = 0;
     char ch_liczba[3]; //przechowywana jest liczba int w formie stringu
 
+    czysc_LCD_linia2();
+    czysc_LCD_linia1();
     wyswietl_LCD("dlugosc PBC:");
     _delay_ms(200);
 
@@ -81,14 +87,18 @@ int get_distance()
             dlugosc += 1;
             if(dlugosc>16) dlugosc = 0;
             gen_char(ch_liczba, &dlugosc);
+            czysc_LCD_linia2(); //czysci i ustawai kursor na początku 2. lini
             wyswietl_LCD(ch_liczba);
+            wyswietl_LCD("cm");
         }
         else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN))
         {
             dlugosc -= 1;
             if(dlugosc<0)   dlugosc = 16;
             gen_char(ch_liczba, &dlugosc);
+            czysc_LCD_linia2();
             wyswietl_LCD(ch_liczba);
+            wyswietl_LCD("cm");
         }
         else if(bit_is_clear(PIN_SWITCH, SWITCH_OK))
         {
@@ -133,28 +143,26 @@ void wykonaj (int dlugosc)
     _delay_ms(500);
 
     relay_on();
-    _delay_ms(50);
+    _delay_ms(200);
+    czysc_LCD_linia1();
+    wyswietl_LCD("pozostało:");
 
     if(time==0) //funkcja nadajaca wartosci domyslne
     {
-        if(dlugosc<=MIN_DLUGOSC) time = 85; //sekund
-        else if(dlugosc<=10) time = 90;
-        else if(dlugosc<=13) time = 95;
+        if(dlugosc<=MIN_DLUGOSC) time = 100; //sekund
+        else if(dlugosc<=10) time = 110;
+        else if(dlugosc<=13) time = 120;
         else time = 100;
     }
 
     naswietlanie = TAK;
     init_LCD(); //dla pewnosci, labowy LCD...
     init_PWM();
-    _delay_ms(50);
     TCNT0 = 0; //zerownaie timera0
     overflow = 0;
 
     while(time > 0)
     {
-        gen_char_time(ch_liczba, &time); //wyswietla ile cykli pozostało do konca naswietlania
-        wyswietl_LCD(ch_liczba);
-
         kierunek(PRZOD);
         _delay_ms(delay); //odleglosc dokad dojadą lampy
 
@@ -170,6 +178,8 @@ void wykonaj (int dlugosc)
     _delay_ms(500);
     relay_off();
     _delay_ms(500);
+    czysc_LCD_linia2();
+    czysc_LCD_linia1();
     wyswietl_LCD("KONIEC PRACY");
     beep();
 }
@@ -188,12 +198,15 @@ void beep()
 void get_time()
 {
     int wait = TAK;
-
-    wyswietl_LCD("ile sekund:         0-ust. domyslne");
+    czysc_LCD_linia2();
+    czysc_LCD_linia1();
+    wyswietl_LCD("czas: 0-default");
     _delay_ms(200);
 
 
     wait = TAK;
+    czysc_LCD_linia2();
+    wyswietl_LCD("0");
     do
     {
         if(bit_is_clear(PIN_SWITCH, SWITCH_UP))
@@ -201,14 +214,18 @@ void get_time()
             if(time<5) time += 1;
             else time += 5;
             gen_char_time(ch_liczba, &time);
+            czysc_LCD_linia2();
             wyswietl_LCD(ch_liczba);
+            wyswietl_LCD("s");
         }
         else if(bit_is_clear(PIN_SWITCH, SWITCH_DOWN))
         {
             if(time < 10) time -= 1;
             else time -= 5;
             gen_char_time(ch_liczba, &time);
+            czysc_LCD_linia2();
             wyswietl_LCD(ch_liczba);
+            wyswietl_LCD("s");
         }
         else if(bit_is_clear(PIN_SWITCH, SWITCH_OK))
         {
